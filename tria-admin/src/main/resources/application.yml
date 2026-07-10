@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: @profile.active@
+
+custom:
+  common:
+    response-enabled: true       # 统一返回包装
+    exception-enabled: true      # 通用异常兜底
+
+  security:
+    enabled: true                 # 登录鉴权总开关
+    exception-enabled: true       # 安全异常处理
+    exclude-paths:                # 免登录白名单
+      - /login
+      - /error
+      - /swagger-ui/**
+      - /v3/api-docs/**
+    jwt:
+      secret: my-project-secret-key
+      expire-time: 7200000
+      header-name: Authorization
+
+  swagger:
+    enabled: true
+    title: 我的项目接口文档
+    description: xxx项目API说明
+    version: 1.0.0
