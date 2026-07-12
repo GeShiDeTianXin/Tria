@@ -19,6 +19,7 @@
     <modules>
         <module>tria-api</module>
         <module>tria-admin</module>
+        <module>tria-common</module>
         <module>tria-service</module>
     </modules>
 
@@ -28,6 +29,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <lombok.version>1.18.30</lombok.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <profile.active>dev</profile.active>
     </properties>
 
@@ -70,7 +73,21 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <optional>true</optional>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- MapStruct -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- 配置提示 -->
@@ -80,31 +97,89 @@
                 <optional>true</optional>
             </dependency>
 
+            <!-- hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>5.8.16</version>
+            </dependency>
+
+            <!-- 内部包公共组件包 -->
+            <dependency>
+                <groupId>com.custom</groupId>
+                <artifactId>custom-common-starter</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <!-- 内部包 -->
+            <dependency>
+                <groupId>com.tamara</groupId>
+                <artifactId>tria-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- swagger -->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>2.2.21</version>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-models-jakarta</artifactId>
+                <version>2.2.21</version>
+                <scope>compile</scope>
+            </dependency>
+
             <!-- 测试 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>com.custom</groupId>
-                <artifactId>custom-common-starter</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <profiles>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>0.2.0</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
+    <profiles>
         <!-- 开发环境 -->
         <profile>
             <id>dev</id>
-
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
             <properties>
                 <profile.active>dev</profile.active>
             </properties>
@@ -113,7 +188,6 @@
         <!-- 测试环境 -->
         <profile>
             <id>test</id>
-
             <properties>
                 <profile.active>test</profile.active>
             </properties>
@@ -122,11 +196,9 @@
         <!-- 生产环境 -->
         <profile>
             <id>prod</id>
-
             <properties>
                 <profile.active>prod</profile.active>
             </properties>
         </profile>
-
     </profiles>
 </project>

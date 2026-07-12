@@ -28,6 +28,16 @@
             <groupId>com.custom</groupId>
             <artifactId>custom-common-starter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.tamara</groupId>
+            <artifactId>tria-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

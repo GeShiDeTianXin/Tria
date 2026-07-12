@@ -141,3 +141,18 @@ CREATE TABLE sys_operation_log (
     create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
     KEY idx_tenant_time (tenant_id, create_time)
 ) COMMENT='操作日志表';
+
+-- ----------------------------
+-- 9. 第三方登录身份绑定表
+-- ----------------------------
+CREATE TABLE sys_user_identity (
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    tenant_id       BIGINT       NOT NULL COMMENT '租户ID',
+    user_id         BIGINT       NOT NULL COMMENT '关联sys_user.id',
+    identity_type   VARCHAR(20)  NOT NULL COMMENT '第三方类型：WECHAT、GITHUB、QQ等',
+    identity_key    VARCHAR(128) NOT NULL COMMENT '第三方唯一标识，如openid/unionid',
+    nickname        VARCHAR(64)  COMMENT '第三方平台昵称（可选，登录时展示用）',
+    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_type_key (identity_type, identity_key),
+    KEY idx_user (user_id)
+) COMMENT='第三方登录身份绑定表';

@@ -1,15 +1,23 @@
 package com.tria.admin.controller;
 
+import com.custom.common.result.Result;
+import com.tria.dto.req.UserLoginReq;
+import com.tria.dto.res.UserLoginRes;
+import com.tria.service.biz.AuthService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@AllArgsConstructor
+@RequestMapping("/api/auth")
 public class LoginController {
 
+    private final AuthService authService;
+
     @PostMapping("/login")
-    public String getUser(@RequestBody Long id) {
-        System.out.println(111111);
-        return "用户id：" + id;
+    public Result<UserLoginRes> userLogin(@RequestBody UserLoginReq userLoginReq) {
+        UserLoginRes userLoginRes = authService.userLogin(userLoginReq);
+        return Result.success(userLoginRes);
     }
 
 }

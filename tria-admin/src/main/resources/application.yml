@@ -1,6 +1,16 @@
 spring:
   profiles:
     active: @profile.active@
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: shenle123
+      database: 0
+    # 以后要切哨兵，改成下面这样，不需要动starter代码：
+    # sentinel:
+    #   master: mymaster
+    #   nodes: 192.168.1.1:26379,192.168.1.2:26379
 
 custom:
   common:
@@ -25,3 +35,8 @@ custom:
     title: 我的项目接口文档
     description: xxx项目API说明
     version: 1.0.0
+
+  redis:
+    enabled: true
+    cache-enabled: true       # 要用@Cacheable才开
+    cache-default-expire: 3600
