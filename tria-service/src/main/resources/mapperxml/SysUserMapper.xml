@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tria.mapper.SysUserMapper">
+  <resultMap id="BaseResultMap" type="com.tria.entity.SysUser">
+    <!--@mbg.generated-->
+    <!--@Table t_sys_user-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="gender" jdbcType="TINYINT" property="gender" />
+    <result column="user_type" jdbcType="TINYINT" property="userType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="login_ip" jdbcType="VARCHAR" property="loginIp" />
+    <result column="login_date" jdbcType="TIMESTAMP" property="loginDate" />
+    <result column="pwd_update_time" jdbcType="TIMESTAMP" property="pwdUpdateTime" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, username, `password`, nickname, avatar, email, mobile, gender, user_type, `status`, 
+    login_ip, login_date, pwd_update_time, deleted, create_time, update_time
+  </sql>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tria.mapper.SysLoginLogMapper">
+  <resultMap id="BaseResultMap" type="com.tria.entity.SysLoginLog">
+    <!--@mbg.generated-->
+    <!--@Table t_sys_login_log-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="login_ip" jdbcType="VARCHAR" property="loginIp" />
+    <result column="login_location" jdbcType="VARCHAR" property="loginLocation" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="msg" jdbcType="VARCHAR" property="msg" />
+    <result column="login_time" jdbcType="TIMESTAMP" property="loginTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, tenant_id, username, login_ip, login_location, browser, os, `status`, msg, login_time
+  </sql>
+</mapper>
