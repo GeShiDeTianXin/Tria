@@ -54,7 +54,7 @@ public class UserLoginReq extends BaseReq {
      * 子类实现各自的校验逻辑
      */
     @Override
-    protected void doValidate() {
+    public void doValidate() {
         CheckUtil.check(LoginTypeEnum.isValidLoginType(loginType),"loginType值无效！");
 
         if (loginType == LoginTypeEnum.PASSWORD) {

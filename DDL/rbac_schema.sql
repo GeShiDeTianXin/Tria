@@ -143,16 +143,15 @@ CREATE TABLE sys_operation_log (
 ) COMMENT='操作日志表';
 
 -- ----------------------------
--- 9. 第三方登录身份绑定表
+-- 9. 通用序号生成表
 -- ----------------------------
-CREATE TABLE sys_user_identity (
-    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
-    tenant_id       BIGINT       NOT NULL COMMENT '租户ID',
-    user_id         BIGINT       NOT NULL COMMENT '关联sys_user.id',
-    identity_type   VARCHAR(20)  NOT NULL COMMENT '第三方类型：WECHAT、GITHUB、QQ等',
-    identity_key    VARCHAR(128) NOT NULL COMMENT '第三方唯一标识，如openid/unionid',
-    nickname        VARCHAR(64)  COMMENT '第三方平台昵称（可选，登录时展示用）',
-    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_type_key (identity_type, identity_key),
-    KEY idx_user (user_id)
-) COMMENT='第三方登录身份绑定表';
+CREATE TABLE t_sys_sequence (
+    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    biz_type    VARCHAR(32)   NOT NULL COMMENT '业务类型，如 tenant_code',
+    biz_key     VARCHAR(255)  NOT NULL COMMENT '业务维度组合键（多个维度拼接后的值）',
+    dimensions  JSON          NULL     COMMENT '原始维度字段，便于排查问题，非必须',
+    current_val BIGINT        NOT NULL DEFAULT 0,
+    step        INT           NOT NULL DEFAULT 1,
+    update_time DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_biz_type_key (biz_type, biz_key)
+) ENGINE=InnoDB COMMENT='通用序号生成表';

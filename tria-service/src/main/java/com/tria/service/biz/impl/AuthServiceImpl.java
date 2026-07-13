@@ -13,7 +13,6 @@ import com.tria.convert.AuthConvert;
 import com.tria.dto.req.UserLoginReq;
 import com.tria.dto.req.UserRegisterReq;
 import com.tria.dto.res.UserLoginRes;
-import com.tria.dto.res.UserRegisterRes;
 import com.tria.entity.*;
 import com.tria.service.base.*;
 import com.tria.service.biz.AuthService;
@@ -41,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final SysRoleMenuIService sysRoleMenuIService;
     private final SysTenantIService sysTenantIService;
     private final SysUserRoleIService sysUserRoleIService;
+    private final SysSequenceIService sysSequenceIService;
 
     private final JwtUtil jwtUtil;
     private final RedisUtils redisUtils;
@@ -48,9 +48,9 @@ public class AuthServiceImpl implements AuthService {
     private final AuthConvert authConvert;
 
     @Override
-    public UserRegisterRes userRegister(UserRegisterReq req) {
+    public void userRegister(UserRegisterReq req) {
         SysUser sysUser = userRegisterRes(req);
-        return null;
+        SysTenant sysTenant = this.initSysTenant(req, sysUser.getId());
     }
 
     @Override
@@ -112,22 +112,33 @@ public class AuthServiceImpl implements AuthService {
 
     private SysUser usernameRegister(UserRegisterReq req) {
         SysUser byUsername = sysUserIService.findByUsername(req.getUsername());
-        if (ObjUtil.isNull(byUsername)) {
+        if (ObjUtil.isNotNull(byUsername)) {
             throw new BusinessException(AuthExceptionEnum.USERNAME_EXISTS);
         }
-        extracted(req);
-
+        Long sysUserId = this.initSysUser(req);
         return null;
     }
 
-    private void 用户注册(UserRegisterReq req) {
+    private SysTenant initSysTenant(UserRegisterReq req, Long sysUserId) {
+        String tenant_code = sysSequenceIService.getSequence("T", req.getUsername(), 2, 10L);
+        SysTenant sysTenant = new SysTenant();
+        sysTenant.setUserId(sysUserId);
+        sysTenant.setTenantCode(tenant_code);
+        sysTenant.setTenantName(req.getNickname()+"的家");
+        sysTenant.setStatus(1);
+        boolean save = this.sysTenantIService.save(sysTenant);
+        return sysTenant;
+    }
+
+    private Long initSysUser(UserRegisterReq req) {
         String newPassword = PasswordUtil.registerUser(req.getPassword());
         SysUser sysUser = authConvert.toSysUser(req);
         sysUser.setPassword(newPassword);
         sysUser.setNickname(StrUtil.isBlank(req.getNickname()) ? req.getUsername() : req.getNickname());
-        // sysUser.setAvatar("默认值");
         sysUser.setStatus(1);
         sysUser.setDeleted(0);
+        boolean save = sysUserIService.save(sysUser);
+        return sysUser.getId();
     }
 
     private String generateAndStoreToken(SysUser sysUser, List<Long> roleIdList) {

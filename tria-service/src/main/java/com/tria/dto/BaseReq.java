@@ -8,5 +8,5 @@ public abstract class BaseReq {
     /**
      * 子类实现各自的校验逻辑
      */
-    protected abstract void doValidate();
+    public abstract void doValidate();
 }

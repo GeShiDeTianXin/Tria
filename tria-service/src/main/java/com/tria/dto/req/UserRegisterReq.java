@@ -1,5 +1,6 @@
 package com.tria.dto.req;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tria.constant.AuthExceptionEnum;
 import com.tria.constant.LoginTypeEnum;
@@ -58,8 +59,8 @@ public class UserRegisterReq extends BaseReq {
      * 子类实现各自的校验逻辑
      */
     @Override
-    protected void doValidate() {
-        CheckUtil.check(RegisterTypeEnum.isValidLoginType(registerType),"registerType值无效！");
+    public void doValidate() {
+        CheckUtil.check(ObjUtil.isNull(registerType),"registerType值无效！");
 
         if (registerType == RegisterTypeEnum.USERNAME) {
             CheckUtil.check(StrUtil.isBlank(username), AuthExceptionEnum.PARAM_ERROR, "username");

@@ -23,12 +23,10 @@ public class SysRoleMenu {
     /**
      * 角色ID
      */
-    @TableId(value = "role_id", type = IdType.ASSIGN_ID)
     private Long roleId;
 
     /**
      * 菜单ID
      */
-    @TableId(value = "menu_id", type = IdType.ASSIGN_ID)
     private Long menuId;
 }

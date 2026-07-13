@@ -12,9 +12,4 @@ public enum RegisterTypeEnum {
     OAUTH("第三方注册"),
     ;
     private final String desc;
-
-    public static boolean isValidLoginType(RegisterTypeEnum loginTypeEnum) {
-        RegisterTypeEnum registerTypeEnum = RegisterTypeEnum.valueOf(loginTypeEnum.name());
-        return null != registerTypeEnum;
-    }
 }

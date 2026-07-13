@@ -1,11 +1,13 @@
 package com.tria.admin.controller;
 
 import com.custom.common.result.Result;
-import com.tria.dto.req.UserLoginReq;
-import com.tria.dto.res.UserLoginRes;
+import com.tria.dto.req.UserRegisterReq;
 import com.tria.service.biz.AuthService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
@@ -14,10 +16,11 @@ public class LoginController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
-    public Result<UserLoginRes> userLogin(@RequestBody UserLoginReq userLoginReq) {
-        UserLoginRes userLoginRes = authService.userLogin(userLoginReq);
-        return Result.success(userLoginRes);
+    @PostMapping("/register")
+    public Result<Void> userLogin(@RequestBody UserRegisterReq req) {
+        req.doValidate();
+        authService.userRegister(req);
+        return Result.success(null);
     }
 
 }

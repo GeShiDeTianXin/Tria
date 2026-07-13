@@ -20,15 +20,8 @@ import lombok.Data;
 @Data
 @TableName(value = "t_sys_user_role")
 public class SysUserRole {
-    /**
-     * 用户ID
-     */
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
+
     private Long userId;
 
-    /**
-     * 角色ID
-     */
-    @TableId(value = "role_id", type = IdType.ASSIGN_ID)
     private Long roleId;
 }

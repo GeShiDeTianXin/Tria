@@ -1,6 +1,7 @@
 package com.tria.service.base;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tria.dto.req.UserRegisterReq;
 import com.tria.entity.SysUser;
 import org.springframework.stereotype.Service;
 
