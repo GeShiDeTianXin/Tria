@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tria.mapper.SysSequenceMapper">
+  <resultMap id="BaseResultMap" type="com.tria.entity.SysSequence">
+    <!--@mbg.generated-->
+    <!--@Table t_sys_sequence-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="biz_type" jdbcType="VARCHAR" property="bizType" />
+    <result column="biz_key" jdbcType="VARCHAR" property="bizKey" />
+    <result column="dimensions" jdbcType="VARCHAR" property="dimensions" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="current_val" jdbcType="BIGINT" property="currentVal" />
+    <result column="step" jdbcType="INTEGER" property="step" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="pad_length" jdbcType="TINYINT" property="padLength" />
+    <result column="max_val" jdbcType="BIGINT" property="maxVal" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, biz_type, biz_key, dimensions, version, current_val, step, update_time, pad_length, 
+    max_val
+  </sql>
+</mapper>
