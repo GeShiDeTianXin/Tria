@@ -1,9 +1,8 @@
 package com.tria.convert;
 
-import com.tria.constant.AuthExceptionEnum;
+import com.tria.dto.req.UserRegisterReq;
 import com.tria.dto.res.UserLoginRes;
 import com.tria.entity.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * @since 2024-01-05
  */
 @Mapper(componentModel = "spring")
-public interface UserLoginConvert {
+public interface AuthConvert {
     @Mapping(source = "sysUser.id",target = "userId")
     @Mapping(source = "sysUser.username",target = "username")
     @Mapping(source = "sysUser.password",target = "password")
@@ -30,4 +29,6 @@ public interface UserLoginConvert {
                                 List<SysUserRole> userRoleByUserId,
                                 List<SysRole> roleInfoByRoleIdList,
                                 List<SysMenu> sysMenuList);
+
+    SysUser toSysUser(UserRegisterReq userRegisterReq);
 }

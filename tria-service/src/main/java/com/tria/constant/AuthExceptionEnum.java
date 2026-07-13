@@ -29,15 +29,28 @@ public enum AuthExceptionEnum implements IExceptionCode {
     ACCOUNT_NOT_FOUND(3002, "账号不存在"),
     ACCOUNT_LOCKED(3003, "账号已被锁定"),
     ACCOUNT_DISABLED(3004, "账号已被禁用"),
-    CAPTCHA_ERROR(3005, "图形验证码错误或已过期"),
+    LOGIN_CAPTCHA_ERROR(3005, "图形验证码错误或已过期"),
     SMS_CODE_ERROR(3006, "短信验证码错误或已过期"),
     SMS_SEND_TOO_FREQUENT(3007, "短信发送过于频繁"),
     UNSUPPORTED_LOGIN_TYPE(3008, "不支持的登录方式！"),
 
-    // ========== 租户相关 4xxx ==========
-    TENANT_NOT_FOUND(4001, "租户不存在"),
-    TENANT_DISABLED(4002, "租户已被禁用"),
-    TENANT_EXPIRED(4003, "租户已过期"),
+    // ========== 注册相关 4xxx ==========
+    PHONE_REGISTERED(4001, "手机号已注册"),
+    EMAIL_REGISTERED(4002, "邮箱已注册"),
+    USERNAME_EXISTS(4003, "用户名已存在"),
+    VERIFY_CODE_ERROR(4004, "验证码错误或已过期"),
+    PASSWORD_MISMATCH(4005, "两次密码输入不一致"),
+    PASSWORD_WEAK(4006, "密码强度不足"),
+    AGREEMENT_NOT_ACCEPTED(4007, "未同意用户协议"),
+    TENANT_INVALID(4008, "租户不存在或已失效"),
+    REGISTER_CAPTCHA_ERROR(402009, "图形验证码错误"),
+    REGISTER_TOO_FREQUENT(4010, "注册过于频繁，请稍后再试"),
+    UNSUPPORTED_REGISTER_TYPE(4011, "不支持的注册方式！"),
+
+    // ========== 租户相关 5xxx ==========
+    TENANT_NOT_FOUND(5001, "租户不存在"),
+    TENANT_DISABLED(5002, "租户已被禁用"),
+    TENANT_EXPIRED(5003, "租户已过期"),
     ;
 
     private final int code;

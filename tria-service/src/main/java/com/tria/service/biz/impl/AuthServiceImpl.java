@@ -1,15 +1,19 @@
 package com.tria.service.biz.impl;
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import com.common.redis.support.RedisUtils;
 import com.common.security.context.LoginUser;
 import com.common.security.jwt.JwtUtil;
 import com.custom.common.exception.BusinessException;
 import com.tria.constant.AuthExceptionEnum;
 import com.tria.constant.LoginTypeEnum;
-import com.tria.convert.UserLoginConvert;
+import com.tria.constant.RegisterTypeEnum;
+import com.tria.convert.AuthConvert;
 import com.tria.dto.req.UserLoginReq;
+import com.tria.dto.req.UserRegisterReq;
 import com.tria.dto.res.UserLoginRes;
+import com.tria.dto.res.UserRegisterRes;
 import com.tria.entity.*;
 import com.tria.service.base.*;
 import com.tria.service.biz.AuthService;
@@ -41,13 +45,19 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RedisUtils redisUtils;
 
-    private final UserLoginConvert userLoginConvert;
+    private final AuthConvert authConvert;
+
+    @Override
+    public UserRegisterRes userRegister(UserRegisterReq req) {
+        SysUser sysUser = userRegisterRes(req);
+        return null;
+    }
 
     @Override
     public UserLoginRes userLogin(UserLoginReq req) {
         LoginTypeEnum loginType = req.getLoginType();
 
-        SysUser sysUser = getUserLoginRes(req, loginType);
+        SysUser sysUser = getUserLoginRes(req);
         if (sysUser.getStatus() == 0) {
             // 账号已经被禁用
             throw new BusinessException(AuthExceptionEnum.ACCOUNT_DISABLED);
@@ -67,9 +77,57 @@ public class AuthServiceImpl implements AuthService {
 
         String token = generateAndStoreToken(sysUser, roleIdList);
 
-        UserLoginRes userLoginRes = userLoginConvert.toUserLoginRes(sysUser, tenantsByUserId, userRoleByUserId, roleInfoByRoleIdList, sysMenuList);
+        UserLoginRes userLoginRes = authConvert.toUserLoginRes(sysUser, tenantsByUserId, userRoleByUserId, roleInfoByRoleIdList, sysMenuList);
         userLoginRes.setToken(token);
         return null;
+    }
+
+    private SysUser userRegisterRes(UserRegisterReq req) {
+        RegisterTypeEnum registerType = req.getRegisterType();
+        switch (registerType) {
+            case USERNAME:
+                return usernameRegister(req);
+            case MOBILE:
+                return smsRegister(req);
+            case EMAIL:
+                return emailRegister(req);
+            case OAUTH:
+                return oauthRegister(req);
+            default:
+                throw new BusinessException(AuthExceptionEnum.UNSUPPORTED_REGISTER_TYPE);
+        }
+    }
+
+    private SysUser oauthRegister(UserRegisterReq req) {
+        return null;
+    }
+
+    private SysUser emailRegister(UserRegisterReq req) {
+        return null;
+    }
+
+    private SysUser smsRegister(UserRegisterReq req) {
+        return null;
+    }
+
+    private SysUser usernameRegister(UserRegisterReq req) {
+        SysUser byUsername = sysUserIService.findByUsername(req.getUsername());
+        if (ObjUtil.isNull(byUsername)) {
+            throw new BusinessException(AuthExceptionEnum.USERNAME_EXISTS);
+        }
+        extracted(req);
+
+        return null;
+    }
+
+    private void 用户注册(UserRegisterReq req) {
+        String newPassword = PasswordUtil.registerUser(req.getPassword());
+        SysUser sysUser = authConvert.toSysUser(req);
+        sysUser.setPassword(newPassword);
+        sysUser.setNickname(StrUtil.isBlank(req.getNickname()) ? req.getUsername() : req.getNickname());
+        // sysUser.setAvatar("默认值");
+        sysUser.setStatus(1);
+        sysUser.setDeleted(0);
     }
 
     private String generateAndStoreToken(SysUser sysUser, List<Long> roleIdList) {
@@ -83,7 +141,8 @@ public class AuthServiceImpl implements AuthService {
         return token;
     }
 
-    private SysUser getUserLoginRes(UserLoginReq req, LoginTypeEnum loginType) {
+    private SysUser getUserLoginRes(UserLoginReq req) {
+        LoginTypeEnum loginType = req.getLoginType();
         switch (loginType) {
             case PASSWORD:
                 return passwordLogin(req);
@@ -98,6 +157,10 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * @param req 需求
+     * @return {@link SysUser }
+     */
     private SysUser oauthLogin(UserLoginReq req) {
         SysUser sysUser = sysUserIService.findByUsername(req.getUsername());
         if (ObjUtil.isEmpty(sysUser)) {
