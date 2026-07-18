@@ -13,35 +13,26 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class UserLoginRes {
+public class WechatLoginRes {
 
-    @Schema(description = "accessToken")
+    @Schema(description = "访问令牌")
     private String accessToken;
+
+    @Schema(description = "刷新令牌")
+    private String refreshToken ;
 
     @Schema(description = "用户信息")
     private UserInfo userInfo;
-
-    @Schema(description = "租户信息列表")
-    private List<TenantInfo> tenantInfoList;
-
-    @Schema(description = "角色信息列表")
-    private List<RoleInfo> roleInfoList;
-
-    @Schema(description = "角色菜单信息列表")
-    private List<RoleMenuInfo> roleMenuInfoList;
 
     @Data
     @Schema(description = "用户信息")
     public static class UserInfo {
 
         @Schema(description = "用户ID")
-        private Long userId;
+        private String id;
 
         @Schema(description = "登录账号")
         private String username;
-
-        @Schema(description = "BCrypt加密后密码")
-        private String password;
 
         @Schema(description = "昵称")
         private String nickname;
@@ -63,26 +54,5 @@ public class UserLoginRes {
 
         @Schema(description = "状态 0-禁用 1-正常")
         private Integer status;
-    }
-
-    @Data
-    @Schema(description = "租户信息")
-    public static class TenantInfo {
-        @Schema(description = "租户编码，业务侧唯一标识")
-        private String tenantCode;
-        @Schema(description = "租户名称")
-        private String tenantName;
-        @Schema(description = "状态 0-禁用 1-正常")
-        private Integer status;
-    }
-
-    @Data
-    @Schema(description = "角色信息")
-    public static class RoleInfo {
-    }
-
-    @Data
-    @Schema(description = "角色菜单信息")
-    public static class RoleMenuInfo {
     }
 }

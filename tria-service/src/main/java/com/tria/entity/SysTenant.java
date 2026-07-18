@@ -43,10 +43,28 @@ public class SysTenant {
     private String tenantName;
 
     /**
+     * 租户头像/图标（可存emoji或图片URL）
+     */
+    @TableField(value = "avatar")
+    private String avatar;
+
+    /**
      * 状态 0-禁用 1-正常
      */
     @TableField(value = "`status`")
     private Integer status;
+
+    /**
+     * 是否管理员 0-否 1-是
+     */
+    @TableField(value = "is_admin")
+    private Integer isAdmin;
+
+    /**
+     * 是否为初始化默认家园 0-否 1-是
+     */
+    @TableField(value = "is_default")
+    private Integer isDefault;
 
     /**
      * 逻辑删除

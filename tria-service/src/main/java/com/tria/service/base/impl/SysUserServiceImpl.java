@@ -22,4 +22,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public SysUser findByUsername(String username) {
         return getOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getUsername, username));
     }
+
+    @Override
+    public SysUser findSysUserById(Long userId) {
+        return getOne(Wrappers.lambdaQuery(SysUser.class).eq(SysUser::getId, userId));
+    }
 }

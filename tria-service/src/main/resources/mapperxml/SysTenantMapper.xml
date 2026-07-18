@@ -8,13 +8,17 @@
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="tenant_code" jdbcType="VARCHAR" property="tenantCode" />
     <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_admin" jdbcType="TINYINT" property="isAdmin" />
+    <result column="is_default" jdbcType="TINYINT" property="isDefault" />
     <result column="deleted" jdbcType="TINYINT" property="deleted" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, user_id, tenant_code, tenant_name, `status`, deleted, create_time, update_time
+    id, user_id, tenant_code, tenant_name, avatar, `status`, is_admin, is_default, deleted, 
+    create_time, update_time
   </sql>
 </mapper>

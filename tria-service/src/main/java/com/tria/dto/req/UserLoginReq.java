@@ -55,7 +55,7 @@ public class UserLoginReq extends BaseReq {
      */
     @Override
     public void doValidate() {
-        CheckUtil.check(LoginTypeEnum.isValidLoginType(loginType),"loginType值无效！");
+        CheckUtil.check(loginType == null,"loginType值无效！");
 
         if (loginType == LoginTypeEnum.PASSWORD) {
             CheckUtil.check(StrUtil.isBlank(username), AuthExceptionEnum.PARAM_ERROR, "username");

@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   profiles:
     active: @profile.active@
@@ -44,7 +47,7 @@ custom:
     enabled: true                 # 登录鉴权总开关
     exception-enabled: true       # 安全异常处理
     exclude-paths:                # 免登录白名单
-      - /api/admin/auth/**
+      - /api/client/auth/**
       - /error
       - /swagger-ui/**
       - /v3/api-docs/**
@@ -71,8 +74,3 @@ custom:
     block-attack-enabled: true
     optimistic-lock-enabled: false    # 有版本号并发控制需求再开
     db-type: mysql
-
-logging:
-  # 全局日志级别（可选值：TRACE, DEBUG, INFO, WARN, ERROR）
-  level:
-    root: INFO

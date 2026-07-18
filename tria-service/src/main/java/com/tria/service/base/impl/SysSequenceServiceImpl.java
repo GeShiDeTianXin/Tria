@@ -32,7 +32,7 @@ public class SysSequenceServiceImpl extends ServiceImpl<SysSequenceMapper, SysSe
             // updateById 依赖 @Version 乐观锁字段，自动带版本号校验，冲突时返回 false
             boolean success = updateById(record);
             if (success) {
-                return format(newVal, record.getPadLength());
+                return format(bizType,bizKey,newVal, record.getPadLength());
             }
 
             // 更新失败说明有并发冲突，重新查最新记录再重试
@@ -84,12 +84,13 @@ public class SysSequenceServiceImpl extends ServiceImpl<SysSequenceMapper, SysSe
     }
 
     /**
-     * 按 padLength 补零，padLength 为空或<=0 时原样返回
+     * 拼接规则：bizType + bizKey + 补零后的序号
+     * padLength 为空或<=0 时序号部分原样返回，不补零
      */
-    private String format(long val, Integer padLength) {
-        if (padLength == null || padLength <= 0) {
-            return String.valueOf(val);
-        }
-        return String.format("%0" + padLength + "d", val);
+    private String format(String bizType, String bizKey, long val, Integer padLength) {
+        String numPart = (padLength == null || padLength <= 0)
+                ? String.valueOf(val)
+                : String.format("%0" + padLength + "d", val);
+        return bizType +"_"+ bizKey +"_"+ numPart;
     }
 }

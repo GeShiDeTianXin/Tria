@@ -1,28 +1,27 @@
 package com.tria.service.biz.impl;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import com.common.redis.support.RedisUtils;
 import com.common.security.context.LoginUser;
 import com.common.security.jwt.JwtUtil;
-import com.custom.common.exception.BusinessException;
-import com.tria.constant.AuthExceptionEnum;
-import com.tria.constant.LoginTypeEnum;
-import com.tria.constant.RegisterTypeEnum;
 import com.tria.convert.AuthConvert;
-import com.tria.dto.req.UserLoginReq;
-import com.tria.dto.req.UserRegisterReq;
-import com.tria.dto.res.UserLoginRes;
-import com.tria.entity.*;
+import com.tria.dto.model.WxSessionResult;
+import com.tria.dto.req.WechatLoginReq;
+import com.tria.dto.res.WechatLoginRes;
+import com.tria.entity.SysTenant;
+import com.tria.entity.SysUser;
+import com.tria.entity.SysUserIdentity;
+import com.tria.entity.SysUserTenant;
 import com.tria.service.base.*;
 import com.tria.service.biz.AuthService;
-import com.tria.util.PasswordUtil;
+import com.tria.util.UsernameGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author xc
@@ -33,169 +32,111 @@ import java.util.concurrent.TimeUnit;
 public class AuthServiceImpl implements AuthService {
 
     private final SysUserIService sysUserIService;
-    private final SysLoginLogIService sysLoginLogIService;
-    private final SysMenuIService sysMenuIService;
-    private final SysOperationLogIService sysOperationLogIService;
-    private final SysRoleIService sysRoleIService;
-    private final SysRoleMenuIService sysRoleMenuIService;
     private final SysTenantIService sysTenantIService;
-    private final SysUserRoleIService sysUserRoleIService;
     private final SysSequenceIService sysSequenceIService;
+    private final SysUserIdentityIService sysUserIdentityIService;
+    private final UsernameGenerator usernameGenerator;
+    private final SysUserTenantIService sysUserTenantIService;
 
     private final JwtUtil jwtUtil;
     private final RedisUtils redisUtils;
 
     private final AuthConvert authConvert;
 
-    @Override
-    public void userRegister(UserRegisterReq req) {
-        SysUser sysUser = userRegisterRes(req);
-        SysTenant sysTenant = this.initSysTenant(req, sysUser.getId());
-    }
+    private static final String JSCODE2SESSION_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+
+    private static final String appid = "wxffa3784252f4eacc";
+    private static final String secret = "b547b44aad670ace41c095ce1ac22095";
+
 
     @Override
-    public UserLoginRes userLogin(UserLoginReq req) {
-        LoginTypeEnum loginType = req.getLoginType();
+    public WechatLoginRes wechatLogin(WechatLoginReq req) {
+        SysUser sysUser = null;
+        WxSessionResult wxSessionResult = code2Session(req.getIdentityKey());
+        SysUserIdentity identity = sysUserIdentityIService.findUserIdentity("WECHAT",wxSessionResult.getOpenid());
+        if (ObjUtil.isNull(identity)) {
+            sysUser = initSysUser();
 
-        SysUser sysUser = getUserLoginRes(req);
-        if (sysUser.getStatus() == 0) {
-            // 账号已经被禁用
-            throw new BusinessException(AuthExceptionEnum.ACCOUNT_DISABLED);
+            // 给用户初始化个租户
+            SysTenant sysTenant = this.initSysTenant(sysUser);
+
+            // 用户第三方身份绑定表
+            initSysUserIdentity(sysUser, wxSessionResult);
+
+            // 初始化用户家园
+            initSysUserTenant(sysUser, sysTenant);
+        } else {
+            sysUser = sysUserIService.findSysUserById(identity.getUserId());
         }
-        // 用户下的租户
-        List<SysTenant> tenantsByUserId = sysTenantIService.getTenantsByUserId(sysUser.getId());
-        // 用户下的角色
-        List<SysUserRole> userRoleByUserId = sysUserRoleIService.getUserRoleByUserId(sysUser.getId());
-        // 用户下的角色Id列表
-        List<Long> roleIdList = userRoleByUserId.stream().map(SysUserRole::getRoleId).toList();
-        // 用户角色信息
-        List<SysRole> roleInfoByRoleIdList = sysRoleIService.getRoleInfoByRoleIdList(roleIdList);
-        // 角色菜单信息
-        List<SysRoleMenu> roleMenuByRoleIdList = sysRoleMenuIService.getRoleMenuByRoleIdList(roleIdList);
-        List<Long> menuIdList = roleMenuByRoleIdList.stream().map(SysRoleMenu::getMenuId).toList();
-        List<SysMenu> sysMenuList = new ArrayList<>();
 
-        String token = generateAndStoreToken(sysUser, roleIdList);
-
-        UserLoginRes userLoginRes = authConvert.toUserLoginRes(sysUser, tenantsByUserId, userRoleByUserId, roleInfoByRoleIdList, sysMenuList);
-        userLoginRes.setToken(token);
-        return null;
-    }
-
-    private SysUser userRegisterRes(UserRegisterReq req) {
-        RegisterTypeEnum registerType = req.getRegisterType();
-        switch (registerType) {
-            case USERNAME:
-                return usernameRegister(req);
-            case MOBILE:
-                return smsRegister(req);
-            case EMAIL:
-                return emailRegister(req);
-            case OAUTH:
-                return oauthRegister(req);
-            default:
-                throw new BusinessException(AuthExceptionEnum.UNSUPPORTED_REGISTER_TYPE);
-        }
-    }
-
-    private SysUser oauthRegister(UserRegisterReq req) {
-        return null;
-    }
-
-    private SysUser emailRegister(UserRegisterReq req) {
-        return null;
-    }
-
-    private SysUser smsRegister(UserRegisterReq req) {
-        return null;
-    }
-
-    private SysUser usernameRegister(UserRegisterReq req) {
-        SysUser byUsername = sysUserIService.findByUsername(req.getUsername());
-        if (ObjUtil.isNotNull(byUsername)) {
-            throw new BusinessException(AuthExceptionEnum.USERNAME_EXISTS);
-        }
-        Long sysUserId = this.initSysUser(req);
-        return null;
-    }
-
-    private SysTenant initSysTenant(UserRegisterReq req, Long sysUserId) {
-        String tenant_code = sysSequenceIService.getSequence("T", req.getUsername(), 2, 10L);
-        SysTenant sysTenant = new SysTenant();
-        sysTenant.setUserId(sysUserId);
-        sysTenant.setTenantCode(tenant_code);
-        sysTenant.setTenantName(req.getNickname()+"的家");
-        sysTenant.setStatus(1);
-        boolean save = this.sysTenantIService.save(sysTenant);
-        return sysTenant;
-    }
-
-    private Long initSysUser(UserRegisterReq req) {
-        String newPassword = PasswordUtil.registerUser(req.getPassword());
-        SysUser sysUser = authConvert.toSysUser(req);
-        sysUser.setPassword(newPassword);
-        sysUser.setNickname(StrUtil.isBlank(req.getNickname()) ? req.getUsername() : req.getNickname());
-        sysUser.setStatus(1);
-        sysUser.setDeleted(0);
-        boolean save = sysUserIService.save(sysUser);
-        return sysUser.getId();
-    }
-
-    private String generateAndStoreToken(SysUser sysUser, List<Long> roleIdList) {
         LoginUser loginUser = new LoginUser();
         loginUser.setUserId(sysUser.getId());
         loginUser.setUsername(sysUser.getUsername());
-        List<String> roleIdStrList = roleIdList.stream().map(String::valueOf).toList();
+        List<String> roleIdStrList = new ArrayList<>();
         loginUser.setRoles(roleIdStrList);
-        String token = jwtUtil.generateToken(loginUser);
-        redisUtils.set("login:user:" + sysUser.getId(), token, 7, TimeUnit.DAYS);
-        return token;
+        String accessToken = jwtUtil.generateToken(loginUser);
+        String refreshToken = jwtUtil.generateRefreshToken(loginUser);
+
+        return authConvert.toWechatLoginRes(sysUser, accessToken, refreshToken);
     }
 
-    private SysUser getUserLoginRes(UserLoginReq req) {
-        LoginTypeEnum loginType = req.getLoginType();
-        switch (loginType) {
-            case PASSWORD:
-                return passwordLogin(req);
-            case SMS:
-                return smsLogin(req);
-            case EMAIL:
-                return emailLogin(req);
-            case OAUTH:
-                return oauthLogin(req);
-            default:
-                throw new BusinessException(AuthExceptionEnum.UNSUPPORTED_LOGIN_TYPE);
-        }
+    private void initSysUserTenant(SysUser sysUser, SysTenant sysTenant) {
+        SysUserTenant sysUserTenant = new SysUserTenant();
+        sysUserTenant.setUserId(sysUser.getId());
+        sysUserTenant.setTenantId(sysTenant.getId());
+        sysUserTenant.setTenantAlias(sysTenant.getTenantName());
+        String avatar = "\uD83D\uDC64"; // 👤 对应的 UTF-16 surrogate pair
+        sysUserTenant.setAvatar(avatar);
+        sysUserTenant.setSortOrder(0);
+        sysUserTenant.setIsDefault(1);
+        sysUserTenantIService.save(sysUserTenant);
     }
 
-    /**
-     * @param req 需求
-     * @return {@link SysUser }
-     */
-    private SysUser oauthLogin(UserLoginReq req) {
-        SysUser sysUser = sysUserIService.findByUsername(req.getUsername());
-        if (ObjUtil.isEmpty(sysUser)) {
-            throw new BusinessException(AuthExceptionEnum.ACCOUNT_NOT_FOUND);
-        }
-        if (PasswordUtil.loginUser(req.getPassword(), sysUser.getPassword())) {
-            throw new BusinessException(AuthExceptionEnum.LOGIN_FAILED);
-        }
+    private void initSysUserIdentity(SysUser sysUser, WxSessionResult wxSessionResult) {
+        SysUserIdentity sysUserIdentity = new SysUserIdentity();
+        sysUserIdentity.setUserId(sysUser.getId());
+        sysUserIdentity.setIdentityType("WECHAT");
+        sysUserIdentity.setIdentityKey(wxSessionResult.getOpenid());
+        sysUserIdentityIService.save(sysUserIdentity);
+    }
+
+    private SysUser initSysUser() {
+        SysUser sysUser;
+        sysUser = new SysUser();
+        String username = usernameGenerator.generate();
+        sysUser.setUsername(username);
+        sysUser.setNickname("微信用户");
+        sysUser.setGender(0);
+        sysUser.setUserType(0);
+        sysUser.setStatus(1);
+        sysUserIService.save(sysUser);
         return sysUser;
     }
 
-    private SysUser emailLogin(UserLoginReq req) {
-        return null;
+    private WxSessionResult code2Session(String code) {
+        String url = String.format(JSCODE2SESSION_URL, appid, secret, code);
+        String response = HttpUtil.get(url); // hutool的HttpUtil，你项目里应该已经引了
+
+        WxSessionResult result = JSONUtil.toBean(response, WxSessionResult.class);
+
+        // 微信这个接口失败时也是200,但body里有errcode字段
+        if (result.getErrcode() != null && result.getErrcode() != 0) {
+            // throw new BusinessException(AuthExceptionEnum.WECHAT_LOGIN_FAILED, result.getErrmsg());
+        }
+        return result;
     }
 
-    private SysUser smsLogin(UserLoginReq req) {
-        return null;
-    }
-
-    private SysUser passwordLogin(UserLoginReq req) {
-        return null;
-    }
-
-    public SysUserIService getUserIService() {
-        return sysUserIService;
+    private SysTenant initSysTenant(SysUser sysUser) {
+        String tenant_code = sysSequenceIService.getSequence("T", sysUser.getUsername(), 2, 10L);
+        SysTenant sysTenant = new SysTenant();
+        sysTenant.setUserId(sysUser.getId());
+        sysTenant.setTenantCode(tenant_code);
+        sysTenant.setTenantName(sysUser.getNickname()+"的家");
+        String avatar = "\uD83D\uDC64"; // 👤 对应的 UTF-16 surrogate pair
+        sysTenant.setAvatar(avatar);
+        sysTenant.setStatus(1);
+        sysTenant.setIsAdmin(1);
+        boolean save = sysTenantIService.save(sysTenant);
+        return sysTenant;
     }
 }
