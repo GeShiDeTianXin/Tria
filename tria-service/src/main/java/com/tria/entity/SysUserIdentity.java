@@ -14,6 +14,7 @@ import lombok.Data;
  * @author xc
  * @since 2024-01-05
  */
+
 /**
  * 用户第三方身份绑定表
  */
@@ -59,9 +60,9 @@ public class SysUserIdentity {
     @TableField(value = "avatar")
     private String avatar;
 
-    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 }

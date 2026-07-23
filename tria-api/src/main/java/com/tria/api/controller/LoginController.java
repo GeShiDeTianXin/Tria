@@ -1,10 +1,7 @@
 package com.tria.api.controller;
 
 import com.custom.common.result.Result;
-import com.tria.dto.req.UserLoginReq;
-import com.tria.dto.req.UserRegisterReq;
 import com.tria.dto.req.WechatLoginReq;
-import com.tria.dto.res.UserLoginRes;
 import com.tria.dto.res.WechatLoginRes;
 import com.tria.service.biz.AuthService;
 import lombok.AllArgsConstructor;

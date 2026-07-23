@@ -7,7 +7,7 @@ import com.common.redis.support.RedisUtils;
 import com.common.security.context.LoginUser;
 import com.common.security.jwt.JwtUtil;
 import com.tria.convert.AuthConvert;
-import com.tria.dto.model.WxSessionResult;
+import com.tria.dto.model.WxSessionResultDTO;
 import com.tria.dto.req.WechatLoginReq;
 import com.tria.dto.res.WechatLoginRes;
 import com.tria.entity.SysTenant;
@@ -52,8 +52,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public WechatLoginRes wechatLogin(WechatLoginReq req) {
         SysUser sysUser = null;
-        WxSessionResult wxSessionResult = code2Session(req.getIdentityKey());
-        SysUserIdentity identity = sysUserIdentityIService.findUserIdentity("WECHAT",wxSessionResult.getOpenid());
+        WxSessionResultDTO wxSessionResultDTO = code2Session(req.getIdentityKey());
+        SysUserIdentity identity = sysUserIdentityIService.findUserIdentity("WECHAT", wxSessionResultDTO.getOpenid());
         if (ObjUtil.isNull(identity)) {
             sysUser = initSysUser();
 
@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
             SysTenant sysTenant = this.initSysTenant(sysUser);
 
             // 用户第三方身份绑定表
-            initSysUserIdentity(sysUser, wxSessionResult);
+            initSysUserIdentity(sysUser, wxSessionResultDTO);
 
             // 初始化用户家园
             initSysUserTenant(sysUser, sysTenant);
@@ -92,11 +92,11 @@ public class AuthServiceImpl implements AuthService {
         sysUserTenantIService.save(sysUserTenant);
     }
 
-    private void initSysUserIdentity(SysUser sysUser, WxSessionResult wxSessionResult) {
+    private void initSysUserIdentity(SysUser sysUser, WxSessionResultDTO wxSessionResultDTO) {
         SysUserIdentity sysUserIdentity = new SysUserIdentity();
         sysUserIdentity.setUserId(sysUser.getId());
         sysUserIdentity.setIdentityType("WECHAT");
-        sysUserIdentity.setIdentityKey(wxSessionResult.getOpenid());
+        sysUserIdentity.setIdentityKey(wxSessionResultDTO.getOpenid());
         sysUserIdentityIService.save(sysUserIdentity);
     }
 
@@ -113,11 +113,11 @@ public class AuthServiceImpl implements AuthService {
         return sysUser;
     }
 
-    private WxSessionResult code2Session(String code) {
+    private WxSessionResultDTO code2Session(String code) {
         String url = String.format(JSCODE2SESSION_URL, appid, secret, code);
         String response = HttpUtil.get(url); // hutool的HttpUtil，你项目里应该已经引了
 
-        WxSessionResult result = JSONUtil.toBean(response, WxSessionResult.class);
+        WxSessionResultDTO result = JSONUtil.toBean(response, WxSessionResultDTO.class);
 
         // 微信这个接口失败时也是200,但body里有errcode字段
         if (result.getErrcode() != null && result.getErrcode() != 0) {

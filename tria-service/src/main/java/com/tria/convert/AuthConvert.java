@@ -1,7 +1,6 @@
 package com.tria.convert;
 
-import com.tria.dto.model.HomeInfo;
-import com.tria.dto.res.HomeInfoRes;
+import com.tria.dto.model.HomeInfoDTO;
 import com.tria.dto.res.UserLoginRes;
 import com.tria.dto.res.WechatLoginRes;
 import com.tria.entity.*;
@@ -23,7 +22,7 @@ public interface AuthConvert {
                                 List<SysRole> roleInfoByRoleIdList,
                                 List<SysMenu> sysMenuList);
 
-    List<HomeInfo>  toHomeInfoRes(List<SysUserTenant> sysUserTenantList);
+    List<HomeInfoDTO>  toHomeInfoRes(List<SysUserTenant> sysUserTenantList);
 
 
     @Mapping(source = "sysUser",target = "userInfo")

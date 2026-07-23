@@ -1,12 +1,10 @@
 package com.tria.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * $desc
@@ -14,6 +12,7 @@ import lombok.Data;
  * @author xc
  * @since 2024-01-05
  */
+
 /**
  * 用户表
  */
@@ -60,6 +59,12 @@ public class SysUser {
     private String mobile;
 
     /**
+     * 生日
+     */
+    @TableField(value = "birthday")
+    private LocalDate birthday;
+
+    /**
      * 性别 0-未知 1-男 2-女
      */
     @TableField(value = "gender")
@@ -101,9 +106,9 @@ public class SysUser {
     @TableField(value = "deleted")
     private Integer deleted;
 
-    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @TableField(value = "update_time",fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 }

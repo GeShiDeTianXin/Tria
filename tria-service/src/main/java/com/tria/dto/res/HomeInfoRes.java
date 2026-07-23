@@ -1,6 +1,6 @@
 package com.tria.dto.res;
 
-import com.tria.dto.model.HomeInfo;
+import com.tria.dto.model.HomeInfoDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +13,5 @@ import java.util.List;
 @Setter
 @Getter
 public class HomeInfoRes {
-    private List<HomeInfo> homeInfoList;
+    private List<HomeInfoDTO> homeInfoDTOList;
 }

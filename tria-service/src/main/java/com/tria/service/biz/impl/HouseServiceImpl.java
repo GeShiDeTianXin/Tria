@@ -2,7 +2,7 @@ package com.tria.service.biz.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.tria.convert.AuthConvert;
-import com.tria.dto.model.HomeInfo;
+import com.tria.dto.model.HomeInfoDTO;
 import com.tria.dto.res.HomeInfoRes;
 import com.tria.entity.SysTenant;
 import com.tria.entity.SysUserTenant;
@@ -29,8 +29,8 @@ public class HouseServiceImpl implements HouseService {
     public HomeInfoRes getHomeInfoByUserId(Long userId) {
         SysTenant sysTenant = sysTenantIService.getOne(Wrappers.<SysTenant>lambdaQuery().eq(SysTenant::getUserId, userId).eq(SysTenant::getIsDefault, 1));
         List<SysUserTenant> list = sysUserTenantIService.list(Wrappers.<SysUserTenant>lambdaQuery().eq(SysUserTenant::getUserId, userId).orderByAsc(SysUserTenant::getSortOrder));
-        List<HomeInfo> homeInfoList = authConvert.toHomeInfoRes(list);
-        homeInfoList.forEach(item -> {
+        List<HomeInfoDTO> homeInfoDTOList = authConvert.toHomeInfoRes(list);
+        homeInfoDTOList.forEach(item -> {
             if (item.getTenantId().equals(sysTenant.getId())) {
                 item.setIsInitDefault(1);
             } else {
@@ -38,7 +38,7 @@ public class HouseServiceImpl implements HouseService {
             }
         });
         HomeInfoRes homeInfoRes = new HomeInfoRes();
-        homeInfoRes.setHomeInfoList(homeInfoList);
+        homeInfoRes.setHomeInfoDTOList(homeInfoDTOList);
         return homeInfoRes;
     }
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tria.mapper.IngredientMapper">
+  <resultMap id="BaseResultMap" type="com.tria.entity.Ingredient">
+    <!--@mbg.generated-->
+    <!--@Table t_ingredient-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="english_name" jdbcType="VARCHAR" property="englishName" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="nature" jdbcType="VARCHAR" property="nature" />
+    <result column="seasons" jdbcType="VARCHAR" property="seasons" />
+    <result column="effects" jdbcType="VARCHAR" property="effects" />
+    <result column="special_tags" jdbcType="VARCHAR" property="specialTags" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="suitable_people" jdbcType="VARCHAR" property="suitablePeople" />
+    <result column="unsuitable_people" jdbcType="VARCHAR" property="unsuitablePeople" />
+    <result column="cook_methods" jdbcType="VARCHAR" property="cookMethods" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="storage_room" jdbcType="VARCHAR" property="storageRoom" />
+    <result column="storage_fridge" jdbcType="VARCHAR" property="storageFridge" />
+    <result column="storage_method" jdbcType="VARCHAR" property="storageMethod" />
+    <result column="storage_tips" jdbcType="VARCHAR" property="storageTips" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BOOLEAN" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `name`, category, english_name, `alias`, `type`, nature, seasons, effects, special_tags, 
+    keywords, suitable_people, unsuitable_people, cook_methods, description, image, storage_room, 
+    storage_fridge, storage_method, storage_tips, create_time, update_time, deleted
+  </sql>
+</mapper>

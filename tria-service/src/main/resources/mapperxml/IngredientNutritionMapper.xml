@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tria.mapper.IngredientNutritionMapper">
+  <resultMap id="BaseResultMap" type="com.tria.entity.IngredientNutrition">
+    <!--@mbg.generated-->
+    <!--@Table t_ingredient_nutrition-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ingredient_id" jdbcType="BIGINT" property="ingredientId" />
+    <result column="nutrient_key" jdbcType="VARCHAR" property="nutrientKey" />
+    <result column="value" jdbcType="DECIMAL" property="value" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, ingredient_id, nutrient_key, `value`
+  </sql>
+</mapper>

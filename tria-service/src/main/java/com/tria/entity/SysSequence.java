@@ -1,20 +1,28 @@
 package com.tria.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
+import lombok.Data;
+
+/**
+ * $desc
+ *
+ * @author xc
+ * @since 2024-01-05
+ */
 
 /**
  * 通用序号生成表
  */
-@Getter
-@Setter
+@Data
 @TableName(value = "t_sys_sequence")
 public class SysSequence {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private Object id;
 
     /**
      * 业务类型，如 tenant_code
@@ -32,7 +40,7 @@ public class SysSequence {
      * 原始维度字段，便于排查问题，非必须
      */
     @TableField(value = "dimensions")
-    private String dimensions;
+    private Object dimensions;
 
     /**
      * 乐观锁版本号

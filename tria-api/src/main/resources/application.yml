@@ -25,6 +25,10 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 # MyBatis-Plus 配置
 mybatis-plus:
@@ -48,6 +52,8 @@ custom:
     exception-enabled: true       # 安全异常处理
     exclude-paths:                # 免登录白名单
       - /api/client/auth/**
+      - /api/client/dict/getAllDict
+      - /uploads/**
       - /error
       - /swagger-ui/**
       - /v3/api-docs/**
@@ -74,3 +80,9 @@ custom:
     block-attack-enabled: true
     optimistic-lock-enabled: false    # 有版本号并发控制需求再开
     db-type: mysql
+
+
+  file:
+    storage-type: local          # local / oss，以后切云存储改这个值
+    local-path: D:/workspace/tria-uploads/
+    local-domain: http://localhost:8081/uploads

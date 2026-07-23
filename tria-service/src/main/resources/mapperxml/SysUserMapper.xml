@@ -11,6 +11,7 @@
     <result column="avatar" jdbcType="VARCHAR" property="avatar" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
     <result column="gender" jdbcType="TINYINT" property="gender" />
     <result column="user_type" jdbcType="TINYINT" property="userType" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -23,7 +24,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, username, `password`, nickname, avatar, email, mobile, gender, user_type, `status`, 
-    login_ip, login_date, pwd_update_time, deleted, create_time, update_time
+    id, username, `password`, nickname, avatar, email, mobile, birthday, gender, user_type, 
+    `status`, login_ip, login_date, pwd_update_time, deleted, create_time, update_time
   </sql>
 </mapper>

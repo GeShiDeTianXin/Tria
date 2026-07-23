@@ -25,7 +25,7 @@ public class SysUserTenant {
     private Long id;
 
     /**
-     * 成员用户ID
+     * 成员用户ID；未认领的虚拟成员为空
      */
     @TableField(value = "user_id")
     private Long userId;
@@ -35,6 +35,36 @@ public class SysUserTenant {
      */
     @TableField(value = "tenant_id")
     private Long tenantId;
+
+    /**
+     * 成员展示名称（虚拟成员必填；已认领成员可与账号昵称不同步，仅作家园内展示名）
+     */
+    @TableField(value = "member_name")
+    private String memberName;
+
+    /**
+     * 与创建者的关系，如配偶/子女/父母
+     */
+    @TableField(value = "relation")
+    private String relation;
+
+    /**
+     * 是否已认领 0-虚拟成员 1-已关联真实账号
+     */
+    @TableField(value = "is_claimed")
+    private Integer isClaimed;
+
+    /**
+     * 认领邀请码，未认领时生成，认领成功后清空
+     */
+    @TableField(value = "claim_code")
+    private String claimCode;
+
+    /**
+     * 创建人用户ID，用于权限校验（谁能编辑虚拟成员信息）
+     */
+    @TableField(value = "created_by")
+    private Long createdBy;
 
     /**
      * 该用户对此家园的自定义称呼
@@ -59,6 +89,12 @@ public class SysUserTenant {
      */
     @TableField(value = "is_default")
     private Integer isDefault;
+
+    /**
+     * 逻辑删除
+     */
+    @TableField(value = "deleted")
+    private Integer deleted;
 
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;

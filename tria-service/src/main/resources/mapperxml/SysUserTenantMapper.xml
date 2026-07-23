@@ -7,16 +7,22 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="member_name" jdbcType="VARCHAR" property="memberName" />
+    <result column="relation" jdbcType="VARCHAR" property="relation" />
+    <result column="is_claimed" jdbcType="TINYINT" property="isClaimed" />
+    <result column="claim_code" jdbcType="VARCHAR" property="claimCode" />
+    <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="tenant_alias" jdbcType="VARCHAR" property="tenantAlias" />
     <result column="avatar" jdbcType="VARCHAR" property="avatar" />
     <result column="sort_order" jdbcType="INTEGER" property="sortOrder" />
     <result column="is_default" jdbcType="TINYINT" property="isDefault" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, user_id, tenant_id, tenant_alias, avatar, sort_order, is_default, create_time, 
-    update_time
+    id, user_id, tenant_id, member_name, relation, is_claimed, claim_code, created_by, 
+    tenant_alias, avatar, sort_order, is_default, deleted, create_time, update_time
   </sql>
 </mapper>

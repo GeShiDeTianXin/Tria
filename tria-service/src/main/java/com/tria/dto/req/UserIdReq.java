@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class HomeInfoReq extends BaseReq {
+public class UserIdReq extends BaseReq {
 
     private Long userId;
 
